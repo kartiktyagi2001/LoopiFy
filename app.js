@@ -11,8 +11,10 @@ app.use(express.json());
 
 //Routers
 const usersRouter = require('./routes/user-route');
+const listingRouter = require('./routes/listing-route')
 
 app.use('/users', usersRouter);
+app.use('/listings', listingRouter);
 
 mongoose
     .connect(process.env.MONGODB_URI, {

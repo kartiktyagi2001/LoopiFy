@@ -11,7 +11,7 @@
     "url": "Loopify"
   },
   "author": "Kartik Tyagi",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
