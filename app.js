@@ -4,9 +4,11 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const config = require('config');
+const cookieParser = require('cookie-parser');
 // const dbgr = require("debug");
 const port = 8080;
 
+app.use(cookieParser());    //i was putting this afetr express.json()
 app.use(express.json());
 
 //Routers

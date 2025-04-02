@@ -113,7 +113,7 @@ router.post('/signin', async(req, res) => {
     }
     else{
         let token = jwt.sign({email, id: existingUser._id}, process.env.JWT_Secret);
-        console.log(token);
+        console.log("token: " + token);
         res.cookie("token", token);
         res.json({message: 'User signed in successfully!'});
     }
