@@ -4,28 +4,43 @@ const router = express.Router();
 
 const auth = require('../middlewares/auth')
 const upload = require('../middlewares/multer');
-const {uploadOnCloudinary} = require('../utils/cloudinary');
+const supabase = require('../utils/supabase')
 const listingModel = require('../models/listing');
 
 router.post('/', auth,upload.array('images', 3), async(req, res) => {
     try{
         const { title, description, price, category, postedBy, status} = req.body;
 
-        if (!req.user?._id) {
-            return res.status(403).json({ 
-              error: "User authentication failed",
-              solution: "Try logging out and back in"
-            });
-          }
+        // if (!req.user?._id) {
+        //     return res.status(403).json({ 
+        //       error: "User authentication failed",
+        //       solution: "Try logging out and back in"
+        //     });
+        //   }
 
         const imageUrls = [];
 
-        // uploading files to cloudinary
+        // uploading files to supabase
 
-        for(const file of req.files) {
-        const uploadedImage = await uploadOnCloudinary(file.path);
-            if(uploadedImage)
-                imageUrls.push(uploadedImage.secure_url);
+        for(const file of req.files){
+            const fileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
+
+            //upload logic
+            const {error: uploadError} = await supabase.storage
+                .from('listings')
+                .upload(fileName, file.buffer, {
+                    contentType: file.mimetype,
+                    upsert: false   //to avoid file overwritting
+                });
+
+            if(uploadError) throw uploadError;
+
+            //public url for uploaded file
+            const {data: urlData} = await supabase.storage
+                .from('listings')
+                .getPublicUrl(fileName);
+
+            imageUrls.push(urlData.publicUrl);
         }
 
         const newListing = new listingModel({

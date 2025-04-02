@@ -8,7 +8,7 @@ const listingSchema = new mongoose.Schema({
     description: String,
     category: {
         type: String,
-        enum: ["service", "product"],   //only these options are available
+        enum: ["service", "SERVICE", "Service", "product", "Product", "PRODUCT"],   //only these options are available
         required: true
     },
     price: {
