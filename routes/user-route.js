@@ -67,7 +67,12 @@ router.post('/signup', async(req, res) => {
         await newUser.save();
 
         // Generate token and set cookie
-        let token = jwt.sign({email, id: newUser._id}, process.env.JWT_Secret);
+        let token = jwt.sign(
+            {_id: newUser._id, email: newUser.email},
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+        
         
         // Set cookie AND send response in one go
         res.status(201)
@@ -112,9 +117,20 @@ router.post('/signin', async(req, res) => {
         return res.json({message: 'Invalid credentials!'});
     }
     else{
-        let token = jwt.sign({email, id: existingUser._id}, process.env.JWT_Secret);
-        console.log("token: " + token);
-        res.cookie("token", token);
+        let token = jwt.sign(
+            {_id: existingUser._id, email: existingUser.email},
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        console.log("token: " + token); //for testing purpose
+
+        res.cookie("token", token,
+            {
+                httpOnly: true,
+                sameSite: 'strict'
+            }
+        );
         res.json({message: 'User signed in successfully!'});
     }
 });  

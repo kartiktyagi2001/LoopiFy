@@ -9,7 +9,12 @@ const listingModel = require('../models/listing');
 
 router.post('/', auth,upload.array('images', 3), async(req, res) => {
     try{
-        const { title, description, price, category, postedBy, status} = req.body;
+
+        //debug logs
+        console.log("req.user: ", req.user);
+        console.log("req.body: ", req.body);
+
+        const { title, description, price, category, status} = req.body;
 
         // if (!req.user?._id) {
         //     return res.status(403).json({ 
@@ -52,6 +57,9 @@ router.post('/', auth,upload.array('images', 3), async(req, res) => {
             postedBy: req.user._id, //id is attached by auth middleware iff the user is authenticated
             status
         });
+
+        //debug log
+        console.log("[POST /listings] New Listing:", newListing);
 
         await newListing.save();
         res.status(201).json({
