@@ -3,6 +3,7 @@ const userModel = require('../models/user');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const auth = require('../middlewares/auth')
 
 // signup logic
 
@@ -134,5 +135,16 @@ router.post('/signin', async(req, res) => {
         res.json({message: 'User signed in successfully!'});
     }
 });  
+
+// logged in user route
+
+router.get('/me', auth, async (req, res) => {
+    try {
+      const user = await userModel.findById(req.user._id).select('-password');
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
 module.exports = router;
